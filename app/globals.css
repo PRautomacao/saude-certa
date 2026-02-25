@@ -357,7 +357,7 @@
 
   /* Cards */
   .card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-[0_1px_3px_rgba(0, 0, 0, .1), 0_1px_2px_rgba(0, 0, 0, .06)];
+    @apply bg-white rounded-xl border border-gray-200 shadow-[0_1px_3px_rgba(0, 0, 0, 0.1), 0_1px_2px_rgba(0, 0, 0, 0.06)];
   }
 
   .section-card {
