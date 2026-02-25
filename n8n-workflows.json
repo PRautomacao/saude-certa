@@ -1,0 +1,195 @@
+{
+  "_meta": {
+    "descricao": "Fluxo completo do Agente IA – Clínica Saúde Certa",
+    "versao": "1.0.0",
+    "autor": "Paulo – Automação Saúde Certa",
+    "n8n_versao": "1.x"
+  },
+  "workflows": [
+    {
+      "nome": "01 – Agente WhatsApp (Recepção e Agendamento)",
+      "trigger": "Webhook Evolution API (mensagem recebida)",
+      "nodes": [
+        {
+          "id": "webhook-entrada",
+          "tipo": "n8n-nodes-base.webhook",
+          "nome": "Receber Mensagem WhatsApp",
+          "config": {
+            "path": "whatsapp-saude-certa",
+            "method": "POST",
+            "responseMode": "lastNode"
+          }
+        },
+        {
+          "id": "extract-msg",
+          "tipo": "n8n-nodes-base.set",
+          "nome": "Extrair dados da mensagem",
+          "config": {
+            "fields": [
+              { "name": "telefone",  "value": "={{ $json.body.data.key.remoteJid.replace('@s.whatsapp.net', '') }}" },
+              { "name": "mensagem",  "value": "={{ $json.body.data.message.conversation || $json.body.data.message.extendedTextMessage?.text }}" },
+              { "name": "nome",      "value": "={{ $json.body.data.pushName }}" }
+            ]
+          }
+        },
+        {
+          "id": "buscar-sessao",
+          "tipo": "n8n-nodes-base.supabase",
+          "nome": "Buscar sessão do chatbot",
+          "config": {
+            "operation": "get",
+            "table": "sessoes_chatbot",
+            "filter": "telefone=eq.{{ $json.telefone }}"
+          }
+        },
+        {
+          "id": "claude-agente",
+          "tipo": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+          "nome": "Claude – Agente Saúde Certa",
+          "config": {
+            "model": "claude-3-5-haiku-latest",
+            "systemPrompt": "Você é a assistente virtual da Clínica Odontológica Saúde Certa, localizada na Rua Dr Neto, nº 321, Centro, Iporá - GO. Telefone: (64) 9999-9999. Horário: Seg-Sex 08h-17h30, Sáb 08h-12h.\n\nServiços: Periodontia (R$350), Cirurgia (R$800), Clareamento (R$600), Canal (R$900), Ortodontia (R$250/mês).\n\nResposta SEMPRE em JSON com esta estrutura:\n{\n  \"resposta\": \"mensagem para o paciente\",\n  \"acao\": null | \"consultar_horarios\" | \"criar_agendamento\" | \"cancelar_agendamento\" | \"proxima_consulta\",\n  \"dados\": {} // dados para a ação\n}\n\nFluxo de agendamento:\n1. Perguntar nome completo\n2. Perguntar serviço desejado\n3. Perguntar data preferida (formato YYYY-MM-DD)\n4. Mostrar horários disponíveis via ação consultar_horarios\n5. Confirmar agendamento via ação criar_agendamento\n\nSempre ser educada, profissional e acolhedora.",
+            "mensagens": "={{ [{ role: 'user', content: $json.mensagem }] }}"
+          }
+        },
+        {
+          "id": "parse-resposta",
+          "tipo": "n8n-nodes-base.code",
+          "nome": "Parsear resposta do Claude",
+          "config": {
+            "code": "const texto = $json.text || $json.content?.[0]?.text;\nlet parsed;\ntry {\n  const match = texto.match(/\\{[\\s\\S]*\\}/);\n  parsed = JSON.parse(match?.[0] || '{}');\n} catch {\n  parsed = { resposta: texto, acao: null, dados: {} };\n}\nreturn [{ json: { ...parsed, telefone: $('Extrair dados da mensagem').first().json.telefone } }];"
+          }
+        },
+        {
+          "id": "router-acao",
+          "tipo": "n8n-nodes-base.switch",
+          "nome": "Rotear por ação",
+          "config": {
+            "rules": [
+              { "value": "consultar_horarios",   "output": 0 },
+              { "value": "criar_agendamento",    "output": 1 },
+              { "value": "cancelar_agendamento", "output": 2 },
+              { "value": "proxima_consulta",     "output": 3 }
+            ],
+            "fallback": 4
+          }
+        },
+        {
+          "id": "webhook-app",
+          "tipo": "n8n-nodes-base.httpRequest",
+          "nome": "Chamar webhook do app",
+          "config": {
+            "url": "{{ $env.APP_URL }}/api/webhook",
+            "method": "POST",
+            "headers": { "x-webhook-token": "={{ $env.WEBHOOK_SECRET_TOKEN }}" },
+            "body": {
+              "action": "={{ $json.acao }}",
+              "data": "={{ $json.dados }}"
+            }
+          }
+        },
+        {
+          "id": "enviar-whatsapp",
+          "tipo": "n8n-nodes-base.httpRequest",
+          "nome": "Enviar resposta WhatsApp",
+          "config": {
+            "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+            "method": "POST",
+            "headers": { "apikey": "={{ $env.EVOLUTION_API_KEY }}" },
+            "body": {
+              "number": "={{ $json.telefone }}",
+              "text": "={{ $json.resposta }}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "nome": "02 – Lembrete 24h antes da consulta",
+      "trigger": "Cron: todo dia às 18h",
+      "nodes": [
+        {
+          "id": "cron",
+          "tipo": "n8n-nodes-base.scheduleTrigger",
+          "config": { "cron": "0 18 * * *" }
+        },
+        {
+          "id": "buscar-amanha",
+          "tipo": "n8n-nodes-base.supabase",
+          "nome": "Buscar agendamentos de amanhã",
+          "config": {
+            "operation": "getAll",
+            "table": "agendamentos",
+            "filter": "data=eq.{{ new Date(Date.now() + 86400000).toISOString().split('T')[0] }}&status=neq.cancelado",
+            "select": "*, pacientes(nome, telefone)"
+          }
+        },
+        {
+          "id": "loop-agendamentos",
+          "tipo": "n8n-nodes-base.splitInBatches",
+          "config": { "batchSize": 1 }
+        },
+        {
+          "id": "enviar-lembrete",
+          "tipo": "n8n-nodes-base.httpRequest",
+          "nome": "Enviar lembrete WhatsApp",
+          "config": {
+            "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+            "method": "POST",
+            "headers": { "apikey": "={{ $env.EVOLUTION_API_KEY }}" },
+            "body": {
+              "number": "={{ $json.pacientes.telefone }}",
+              "text": "Olá {{ $json.pacientes.nome }}! 😊\n\nLembrando que você tem uma consulta agendada na Clínica Saúde Certa amanhã!\n\n📅 Data: {{ $json.data }}\n⏰ Horário: {{ $json.horario.substring(0, 5) }}\n\n📍 Rua Dr Neto, 321, Centro, Iporá-GO\n\nPrecisando cancelar ou reagendar, é só responder esta mensagem. Até lá! 🦷"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "nome": "03 – Relatório mensal automático",
+      "trigger": "Cron: dia 1 de cada mês às 08h",
+      "nodes": [
+        {
+          "id": "cron-mensal",
+          "tipo": "n8n-nodes-base.scheduleTrigger",
+          "config": { "cron": "0 8 1 * *" }
+        },
+        {
+          "id": "buscar-financeiro",
+          "tipo": "n8n-nodes-base.supabase",
+          "nome": "Buscar dados do mês anterior",
+          "config": {
+            "operation": "getAll",
+            "table": "financeiro"
+          }
+        },
+        {
+          "id": "calcular-relatorio",
+          "tipo": "n8n-nodes-base.code",
+          "nome": "Calcular KPIs",
+          "config": {
+            "code": "const dados = $input.all().map(i => i.json);\nconst entradas = dados.filter(d => d.tipo === 'entrada' && d.status === 'pago').reduce((a, d) => a + d.valor, 0);\nconst saidas   = dados.filter(d => d.tipo === 'saida').reduce((a, d) => a + d.valor, 0);\nreturn [{ json: { total_entradas: entradas, total_saidas: saidas, saldo: entradas - saidas, total_registros: dados.length } }];"
+          }
+        },
+        {
+          "id": "enviar-email",
+          "tipo": "n8n-nodes-base.emailSend",
+          "nome": "Enviar relatório por e-mail",
+          "config": {
+            "to": "{{ $env.EMAIL_CLINICA }}",
+            "subject": "Relatório Financeiro Mensal – Saúde Certa",
+            "text": "Relatório do mês:\n\nEntradas: R$ {{ $json.total_entradas }}\nSaídas:   R$ {{ $json.total_saidas }}\nSaldo:    R$ {{ $json.saldo }}"
+          }
+        }
+      ]
+    }
+  ],
+  "variaveis_ambiente": {
+    "APP_URL": "https://saudecerta.vercel.app",
+    "WEBHOOK_SECRET_TOKEN": "seu_token_aqui",
+    "EVOLUTION_URL": "https://evolution.seudominio.com",
+    "EVOLUTION_INSTANCE": "saude-certa",
+    "EVOLUTION_API_KEY": "sua_api_key",
+    "EMAIL_CLINICA": "contato@saudecerta.com.br"
+  }
+}
