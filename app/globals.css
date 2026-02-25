@@ -61,7 +61,8 @@
 
   /* Nav */
   .navbar {
-    @apply sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-[1px] border-solid border-[#d9f2e3] px-10 h-16 flex items-center justify-between shadow-[0_1px_12px_rgba(42, 157, 100, 0.08)];
+    @apply sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-[1px] border-solid border-[#d9f2e3] px-10 h-16 flex items-center justify-between;
+    box-shadow: 0 1px 12px rgba(42, 157, 100, 0.08);
   }
 
   .navbar-logo {
@@ -96,7 +97,8 @@
   }
 
   .btn-nav:hover {
-    @apply bg-brand-600 -translate-y-[1px] shadow-[0_4px_12px_rgba(42, 157, 100, 0.3)];
+    @apply bg-brand-600 -translate-y-[1px];
+    box-shadow: 0 4px 12px rgba(42, 157, 100, 0.3);
   }
 
   /* Buttons */
@@ -106,7 +108,8 @@
   }
 
   .btn-primary:hover {
-    @apply bg-brand-600 shadow-[0_6px_16px_rgba(42, 157, 100, 0.35)] -translate-y-0.5;
+    @apply bg-brand-600 -translate-y-0.5;
+    box-shadow: 0 6px 16px rgba(42, 157, 100, 0.35);
   }
 
   .btn-secondary {
@@ -124,7 +127,8 @@
   }
 
   .btn-white:hover {
-    @apply -translate-y-0.5 shadow-[0_8px_20px_rgba(0, 0, 0, 0.15)];
+    @apply -translate-y-0.5;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
 
   .btn-sm {
@@ -357,7 +361,8 @@
 
   /* Cards */
   .card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-[0_1px_3px_rgba(0, 0, 0, 0.1), 0_1px_2px_rgba(0, 0, 0, 0.06)];
+    @apply bg-white rounded-xl border border-gray-200;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   }
 
   .section-card {
