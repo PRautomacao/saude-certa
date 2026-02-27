@@ -145,11 +145,9 @@ export default function HomePage() {
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="bg-gradient-to-br from-brand-100 to-brand-50 rounded-2xl p-12 flex items-center justify-center min-h-64">
+            <div className="flex items-center justify-center">
               <div className="text-center">
-                <div className="w-32 h-32 bg-brand-200 rounded-full mx-auto mb-4 flex items-center justify-center text-6xl">
-                  👩‍⚕️
-                </div>
+                <img src="/ana-luz.jpg" alt="Draª Ana Luz" className="rounded-full w-32 h-32 mx-auto mb-4 object-cover" />
                 <div className="text-brand-700 font-semibold">Draª Ana Luz</div>
                 <div className="text-brand-500 text-sm">CRO/GO 12345</div>
               </div>
