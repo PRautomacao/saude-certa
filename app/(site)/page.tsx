@@ -5,7 +5,7 @@ import {
   Stethoscope, Sparkles,
 } from 'lucide-react';
 import ChatWidget from './components/ChatWidget';
-import DoctorAvatar from './components/DoctorAvatar';
+
 
 const servicos = [
   { icon: '🦷', nome: 'Periodontia', desc: 'Tratamento especializado das gengivas e estruturas de suporte dos dentes.', valor: 'A partir de R$ 350' },
@@ -146,17 +146,15 @@ export default function HomePage() {
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="flex items-center justify-center">
-              <div className="text-center">
-                <DoctorAvatar
-                  src="/logo-png.png"
-                  alt="Draª Ana Luz"
-                  className="rounded-full w-32 h-32 mx-auto mb-4 object-cover"
-                />
-                <div className="text-brand-700 font-semibold">Draª Ana Luz</div>
-                <div className="text-brand-500 text-sm">CRO/GO 12345</div>
+              <div className="bg-gradient-to-br from-brand-100 to-brand-50 rounded-2xl p-12 flex items-center justify-center min-h-64">
+                <div className="text-center">
+                  <div className="w-32 h-32 bg-brand-200 rounded-full mx-auto mb-4 flex items-center justify-center text-6xl">
+                    👩‍⚕️
+                  </div>
+                  <div className="text-brand-700 font-semibold">Draª Ana Luz</div>
+                  <div className="text-brand-500 text-sm">CRO/GO 12345</div>
+                </div>
               </div>
-            </div>
             <div>
               <div className="text-brand-600 text-sm font-semibold uppercase tracking-wide mb-2">Nossa Especialista</div>
               <h2 className="font-display text-3xl text-brand-900 mb-4">Draª Ana Luz</h2>
