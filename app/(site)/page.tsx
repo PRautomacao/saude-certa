@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Phone, MapPin, Star, Shield, Clock, Heart,
   ChevronRight, CheckCircle2, Calendar,
@@ -146,14 +147,15 @@ export default function HomePage() {
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="bg-gradient-to-br from-brand-100 to-brand-50 rounded-2xl p-12 flex items-center justify-center min-h-64">
-                <div className="text-center">
-                  <div className="w-32 h-32 bg-brand-200 rounded-full mx-auto mb-4 flex items-center justify-center text-6xl">
-                    👩‍⚕️
-                  </div>
-                  <div className="text-brand-700 font-semibold">Draª Ana Luz</div>
-                  <div className="text-brand-500 text-sm">CRO/GO 12345</div>
-                </div>
+              <div className="relative rounded-2xl overflow-hidden min-h-64 h-80 md:h-96 shadow-lg">
+                <Image
+                  src="/logo-png.png"
+                  alt="Draª Ana Luz — Clínica Saúde Certa"
+                  fill
+                  className="object-cover object-top"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
               </div>
             <div>
               <div className="text-brand-600 text-sm font-semibold uppercase tracking-wide mb-2">Nossa Especialista</div>
