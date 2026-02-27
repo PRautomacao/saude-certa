@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Cliente admin (service role) para operações do webhook
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+// Inicialização lazy — evita erro no build quando SUPABASE_SERVICE_ROLE_KEY não está definida
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+}
 
 // Autenticação por token estático (configurado no n8n)
 function autenticarRequisicao(req: NextRequest): boolean {
@@ -18,6 +20,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
+  const supabase = getSupabase();
   const body = await request.json();
   const { action, data } = body;
 
