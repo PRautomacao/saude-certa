@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 import {
@@ -148,7 +148,6 @@ export default function AgendaPage() {
         </button>
       </div>
 
-      {/* Semana */}
       <div className="card mb-5">
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
           <button onClick={() => setSemanaAtual((d) => subWeeks(d, 1))} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
@@ -184,7 +183,6 @@ export default function AgendaPage() {
         </div>
       </div>
 
-      {/* Agendamentos do dia */}
       <div className="section-card">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="w-5 h-5 text-brand-500" />

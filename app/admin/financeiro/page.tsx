@@ -50,7 +50,6 @@ function ModalLancamento({
           <h2 className="font-semibold">Novo Lançamento</h2>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          {/* Tipo */}
           <div className="grid grid-cols-2 gap-2">
             {(['entrada', 'saida'] as TipoLancamento[]).map((t) => (
               <button
@@ -213,7 +212,6 @@ export default function FinanceiroPage() {
         </div>
       </div>
 
-      {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Entradas',   valor: totalEntradas,  icon: TrendingUp,    cor: 'text-green-600', bg: 'bg-green-50' },
@@ -233,7 +231,6 @@ export default function FinanceiroPage() {
         ))}
       </div>
 
-      {/* Gráfico anual */}
       <div className="section-card mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold">Fluxo Anual – {ano}</h2>
@@ -259,10 +256,8 @@ export default function FinanceiroPage() {
         </ResponsiveContainer>
       </div>
 
-      {/* Filtros + Tabela */}
       <div className="section-card">
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          {/* Seletor mês */}
           <select className="input w-auto text-sm" value={mes} onChange={(e) => setMes(Number(e.target.value))}>
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i + 1} value={i + 1}>

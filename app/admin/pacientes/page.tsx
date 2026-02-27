@@ -117,7 +117,6 @@ export default function PacientesPage() {
         </button>
       </div>
 
-      {/* Search */}
       <div className="relative mb-5">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <input
@@ -128,7 +127,6 @@ export default function PacientesPage() {
         />
       </div>
 
-      {/* Table */}
       <div className="card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">

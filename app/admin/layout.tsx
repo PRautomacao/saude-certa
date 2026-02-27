@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -30,7 +30,6 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
 
   return (
     <aside className="flex flex-col h-full w-64 bg-white border-r border-border">
-      {/* Logo */}
       <div className="p-5 border-b border-border flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
@@ -48,7 +47,6 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
         )}
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
           const active = pathname.startsWith(item.href);
@@ -66,7 +64,6 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
         })}
       </nav>
 
-      {/* User + Logout */}
       <div className="p-3 border-t border-border">
         <Link href="/" className="sidebar-link text-xs mb-1" target="_blank">
           ← Ver site público
@@ -85,12 +82,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      {/* Desktop Sidebar */}
       <div className="hidden lg:flex flex-col shrink-0">
         <Sidebar />
       </div>
 
-      {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="flex flex-col shrink-0">
@@ -100,9 +95,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       )}
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Bar */}
         <header className="bg-white border-b border-border px-4 lg:px-6 h-14 flex items-center justify-between shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -126,7 +119,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           {children}
         </main>

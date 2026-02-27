@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 import { Users, Calendar, TrendingUp, TrendingDown, DollarSign, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -13,7 +13,6 @@ import type { Agendamento } from '@/types';
 
 const COLORS_PIE = ['#2a9d64', '#4db882', '#7dcfa6', '#b3e5c8', '#d9f2e3'];
 
-// Mock data para demonstração (substituir por dados reais)
 const fluxoMock = [
   { mes: 'jan', entradas: 8500, saidas: 3200 },
   { mes: 'fev', entradas: 9200, saidas: 2800 },
@@ -103,7 +102,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6 animate-stagger">
         <KpiCard
           titulo="Total de Pacientes"
@@ -136,9 +134,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        {/* Fluxo de caixa */}
         <div className="section-card lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-foreground">Fluxo de Caixa – {hoje.getFullYear()}</h2>
@@ -166,7 +162,6 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </div>
 
-        {/* Pizza serviços */}
         <div className="section-card">
           <h2 className="font-semibold text-foreground mb-4">Consultas por Serviço</h2>
           <ResponsiveContainer width="100%" height={220}>
@@ -184,7 +179,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Agendamentos hoje */}
       <div className="section-card">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="w-5 h-5 text-brand-500" />
