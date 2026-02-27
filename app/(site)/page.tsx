@@ -147,7 +147,12 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="flex items-center justify-center">
               <div className="text-center">
-                <img src="/logo-png.png" alt="Draª Ana Luz" className="rounded-full w-32 h-32 mx-auto mb-4 object-cover" />
+                <img
+                src="/logo-png.png"
+                alt="Draª Ana Luz"
+                className="rounded-full w-32 h-32 mx-auto mb-4 object-cover"
+                onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/200.png?text=Foto'; }}
+              />
                 <div className="text-brand-700 font-semibold">Draª Ana Luz</div>
                 <div className="text-brand-500 text-sm">CRO/GO 12345</div>
               </div>
